@@ -27,19 +27,20 @@ def upload_files():
         # カテゴリーのリスト
         categories = ["00", "13", "31", "38", "42", "44", "73", "91"]
 
-        # 必要な列のみを読み込む
-        x02_df = pd.read_excel(x02_file, usecols=['商品番号', 'カテゴリー'])
-        x04_df = pd.read_excel(x04_file, usecols=['商品番号', '正味', '正味金額'])
+        # 必要な列とデータ型を指定して読み込む
+        x02_df = pd.read_excel(x02_file, dtype={
+            '商品番号': 'str',
+            'カテゴリー': 'category'
+        }, usecols=['商品番号', 'カテゴリー'])
 
-        # カテゴリーを文字列型に変換
-        x02_df['カテゴリー'] = x02_df['カテゴリー'].astype(str)
+        x04_df = pd.read_excel(x04_file, dtype={
+            '商品番号': 'str',
+            '正味': 'float32',
+            '正味金額': 'float32'
+        }, usecols=['商品番号', '正味', '正味金額'])
 
-        # カテゴリーでフィルタリング
+        # x02_dfをカテゴリーでフィルタリング
         x02_df = x02_df[x02_df['カテゴリー'].isin(categories)]
-
-        # データ型を最適化
-        x04_df['正味'] = pd.to_numeric(x04_df['正味'], errors='coerce', downcast='float')
-        x04_df['正味金額'] = pd.to_numeric(x04_df['正味金額'], errors='coerce', downcast='float')
 
         # 商品番号でマージ
         merged_df = pd.merge(
