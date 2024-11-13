@@ -28,10 +28,10 @@ def upload_files():
         x02_df = pd.read_excel(x02_file)
         x04_df = pd.read_excel(x04_file)
 
-
+        # 文字列を数値に変換（必要に応じて）
         x02_df['カテゴリー'] = pd.to_numeric(x02_df['カテゴリー'], errors='coerce')
         x04_df['正味'] = pd.to_numeric(x04_df['正味'], errors='coerce')
-       x04_df['正味金額'] = pd.to_numeric(x04_df['正味金額'], errors='coerce')
+        x04_df['正味金額'] = pd.to_numeric(x04_df['正味金額'], errors='coerce')
 
         # 1) X04のA列とX02のB列でマッチング
         merged_df = pd.merge(
@@ -45,7 +45,7 @@ def upload_files():
         # 2) カテゴリーのリスト
         categories = ["00", "13", "31", "38", "42", "44", "73", "91"]
 
-        # 3) カテゴリーごとにE列とH列を合算
+        # 3) カテゴリーごとに正味と正味金額を合算
         result = merged_df[merged_df['カテゴリー'].isin(categories)].groupby('カテゴリー').agg({
             '正味': 'sum',
             '正味金額': 'sum'
